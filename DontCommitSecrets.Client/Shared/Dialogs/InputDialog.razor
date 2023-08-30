@@ -1,0 +1,42 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@Input" TextChanged="@OnTextChanged" Immediate="true"
+            Variant="Variant.Text" Error="@(!string.IsNullOrEmpty(ErrorText))" ErrorText="@ErrorText"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!string.IsNullOrEmpty(ErrorText) || string.IsNullOrEmpty(Input))">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public Func<string, string?> Validator { get; set; } = null!;
+
+    public bool Disabled { get; set; }
+
+    public string Input { get; set; } = string.Empty;
+
+    public string? ErrorText { get; set; }
+
+    public void OnTextChanged(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            ErrorText = Validator.Invoke(value);
+        }
+    }
+
+    public void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(Input));
+    }
+
+    public void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

@@ -1,0 +1,33 @@
+﻿@using DontCommitSecrets.Client.Models;
+@using DontCommitSecrets.Client.Utils;
+
+<MudNavMenu>
+    <MudTreeView Items="@SubSections">
+        <ItemTemplate Context="item">
+            <MudTreeViewItem Items="@item.SubSections" ExpandedIconColor="Color.Inherit">
+                <BodyContent>
+                    <MudNavLink Href="@LinkUtils.GetSectionLink(item.Section)">@item.Section.Title</MudNavLink>
+                </BodyContent>
+            </MudTreeViewItem>
+        </ItemTemplate>
+    </MudTreeView>
+</MudNavMenu>
+
+@code {
+    private HashSet<WrappedSection> SubSections { get; set; } = new HashSet<WrappedSection>();
+
+    [Parameter, EditorRequired]
+    public Section Section { get; set; } = null!;
+
+    protected override void OnParametersSet()
+    {
+        SubSections = Section.SubSections.Select(ToWrappedSection).ToHashSet();
+    }
+
+    private static WrappedSection ToWrappedSection(Section section)
+    {
+        return new WrappedSection(section, section.SubSections.Select(ToWrappedSection).ToHashSet());
+    }
+
+    private record WrappedSection(Section Section, HashSet<WrappedSection> SubSections);
+}

@@ -1,0 +1,49 @@
+﻿@page "/"
+@using DontCommitSecrets.Client.Models;
+@using DontCommitSecrets.Client.Services;
+@using DontCommitSecrets.Client.Utils;
+@inject IApiService ApiService
+
+<PageTitle>DontCommitSecrets</PageTitle>
+
+<MudAppBar Elevation="1">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => NavOpen = !NavOpen)" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/EngineerCoding/DontCommitSecrets" Target="_blank" />
+</MudAppBar>
+<MudDrawer @bind-Open="@NavOpen" Elevation="1" Style="top: 0;">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">DontCommitSecrets</MudText>
+    </MudDrawerHeader>
+    @if (RootSection != null)
+    {
+        <TreeNavigation Section="@RootSection" />
+    }
+</MudDrawer>
+<MudMainContent Class="mt-5">
+    <MudContainer MaxWidth="MaxWidth.Medium">
+        @if (RootSection != null)
+        {
+            <MudContainer Class="d-flex flex-wrap gap-2">
+                <SecretsPanel Section="@RootSection" Class="flex-1" OnSectionChanged="() => StateHasChanged()" />
+            </MudContainer>
+        }
+        else
+        {
+            <MudContainer Class="d-flex justify-center">
+                <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+            </MudContainer>
+        }
+    </MudContainer>
+</MudMainContent>
+
+@code {
+    public bool NavOpen { get; set; }
+
+    public Section? RootSection { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        RootSection = await ApiService.Get();
+    }
+}
