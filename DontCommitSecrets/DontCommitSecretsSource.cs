@@ -9,19 +9,11 @@ public class DontCommitSecretsSource : IConfigurationSource
 
     public TimeSpan CacheTTL { get; }
 
-    public DontCommitSecretsSource(string host) : this(new Uri(host))
+    public DontCommitSecretsSource(string host, TimeSpan? cacheTTL) : this(new Uri(host), cacheTTL)
     {
     }
 
-    public DontCommitSecretsSource(string host, TimeSpan cacheTTL) : this(new Uri(host), cacheTTL)
-    {
-    }
-
-    public DontCommitSecretsSource(Uri host) : this(host, TimeSpan.FromHours(1))
-    {
-    }
-
-    public DontCommitSecretsSource(Uri host, TimeSpan cacheTTL)
+    public DontCommitSecretsSource(Uri host, TimeSpan? cacheTTL)
     {
         var uriBuilder = new UriBuilder(host);
 
@@ -33,7 +25,7 @@ public class DontCommitSecretsSource : IConfigurationSource
         uriBuilder.Path = currentPath;
 
         Endpoint = uriBuilder.Uri;
-        CacheTTL = cacheTTL;
+        CacheTTL = cacheTTL ?? TimeSpan.FromMinutes(5);
     }
 
     public IConfigurationProvider Build(IConfigurationBuilder builder)
