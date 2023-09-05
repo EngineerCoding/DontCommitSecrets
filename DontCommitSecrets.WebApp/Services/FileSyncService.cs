@@ -67,7 +67,7 @@ public class FileSyncService : ISecretSyncService
 
     private static void ReadToDictionary(ConcurrentDictionary<string, object> target, Stack<string> path, JsonObject jsonObject)
     {
-        var basicPath = SectionUtils.ConstructPath(path.ToArray());
+        var basicPath = SectionUtils.ConstructPath(path.Reverse().ToArray());
         foreach (var kvp in jsonObject)
         {
             if (kvp.Value is JsonObject subObject)

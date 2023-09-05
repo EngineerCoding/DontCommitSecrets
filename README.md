@@ -18,5 +18,10 @@ For dotnet a NuGet package is exposed: DontCommitSecrets. To add the server to y
 configurationBuilder.AddDontCommitSecrets("http://localhost:80");
 ```
 
-Personally, I am only adding this source when running within a development environment, to prevent a production machine from fetching data to a non-existent server.
+Personally, I am only adding this source when running within a development environment, to prevent a production machine from fetching data to a non-existent server. To do this, add the NuGet package like so in your .csproj file:
+```
+<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+   <PackageReference Include="DontCommitSecrets" Version="0.0.1" />
+</ItemGroup>
+```
 
